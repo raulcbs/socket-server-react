@@ -3,7 +3,8 @@ const express = require('express')
 const http = require('http')
 const socketIo = require('socket.io')
 const path = require('path')
-const { Socket } = require('dgram')
+const cors = require('cors')
+
 const Sockets = require('./sockets')
 
 class Server {
@@ -20,18 +21,21 @@ class Server {
 
   middlewares() {
     this.app.use(express.static(path.resolve(__dirname, '../public')))
+
+    // CORS
+    this.app.use(cors())
   }
 
-	configSockets() {
-		new Sockets(this.io).socketEvents()
-	}
+  configSockets() {
+    new Sockets(this.io).socketEvents()
+  }
 
   execute() {
     // init middlewares
     this.middlewares()
 
-		// init sockets
-		this.configSockets()
+    // init sockets
+    this.configSockets()
 
     // init server
     this.server.listen(this.port, () => {
